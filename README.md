@@ -1,4 +1,4 @@
-This is the second part of a three-part series. This part starts showing how to build CLI tools in Go. See the first part for the language building blocks.
+This is the second part of a series introducing Bash programmers to Go. This part starts showing how to build CLI tools in Go. See the first part for the language building blocks.
 
 # Our first CLI tool
 
