@@ -217,7 +217,7 @@ p.Print()
 
 # Getting more practical
 
-Having done the obligatory hello (world) example let's turn to something more practical. We'll write a CLI tool to count duplicate lines in input. To be able to change the input we create a counter type with the `input` field of the familiar `io.Reader` type
+Having done the obligatory hello (world) example let's turn to something more practical. We'll write a CLI tool to count duplicate lines in input. To be able to change the input we create a type called `counter` with the `input` field of the familiar `io.Reader` type
 
 ```go
 // count/1/count.go
@@ -239,13 +239,13 @@ func (c *counter) Lines() (map[string]int, error) {
 }
 ```
 
-The Lines function counts duplicates lines by scanning the input line by line and keeping the count for each identical line in a map of strings to integers.
+The Lines function counts duplicate lines by scanning the input line by line and keeping the count for each identical line in a map (of strings to integers).
 
 ## Optional parameter
 
 Here's another pattern for having both a default value and being able to change it if needed. It's based on a function type - yeah, in Go we can define a custom function type.
 
-The `option` type below is the type of the arguments passed to the `NewCounter` function. There can be zero or more of such arguments. This is called a variadic parameter and it's denoted by the `...` syntax:
+The `option` type below is a function with specific signature. And we define the `NewCounter` function to use the `option` type for its parameters. There can be zero or more of such parameters. This is called a variadic parameter and it's denoted by the `...` syntax:
 
 ```go
 // count/1/count.go
@@ -260,7 +260,7 @@ func NewCounter(opts ...option) *counter {
 }
 ```
 
-Now let's define a function that returns an `option`:
+Now, let's define a function that returns an `option`:
 
 ```go
 // count/1/count.go
@@ -274,6 +274,8 @@ func WithInput(input io.Reader) option {
 	}
 }
 ```
+
+## CLI arguments
 
 This `WithInput` function can be then used like this:
 
@@ -295,9 +297,17 @@ if len(os.Args) > 1 {
 // ...
 ```
 
-## CLI arguments
+To find out what's `os.Args` we consult the documentation, for example like this:
 
-But if look at the `main` fuction in `count/1/cmd/count/main.go` the part handling the CLI arguments is a bit ugly. Let's hide it inside another function returning an option:
+```
+$ go doc os.Args
+package os // import "os"
+
+var Args []string
+    Args hold the command-line arguments, starting with the program name.
+```
+
+But if look at the `main` fuction in `count/1/cmd/count/main.go` the part handling the CLI arguments is a bit ugly. Let's hide it (abstract way) inside another function returning an `option`:
 
 ```go
 // count/2/count.go
@@ -312,7 +322,7 @@ func WithInputFromArgs(args []string) option {
 		}
 		c.input = f
 		// NOTE: We are not closing the f and we take only the first
-		// argument. See count/3/count.go for how to fix both
+		// argument. See count/3/count.go for how to fix both these
 		// shortcomings.
 		return nil
 	}
@@ -371,7 +381,7 @@ Usage: count [-lines] [file...]
         count lines, not words
 ```
 
-Nice and simple. We can give it a try:
+Nice and simple. We give it a try:
 
 ```sh
 $ go run ./cmd/count -lines /etc/hosts /etc/networks | sort -n
