@@ -275,7 +275,7 @@ func WithInput(input io.Reader) option {
 }
 ```
 
-## CLI arguments
+## Command-line arguments
 
 This `WithInput` function can be then used like this:
 
@@ -348,7 +348,7 @@ func main() {
 }
 ```
 
-## CLI flags
+## Command-line flags
 
 We saw how to handle the command line arguments. What about flags (also called options)?
 
