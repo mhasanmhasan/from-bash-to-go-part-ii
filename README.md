@@ -60,7 +60,7 @@ ok      hello   0.570s
 
 we can see that all is good now. Or is it? Well, something must be wrong because an empty function that does nothing at all (except that it exists) passes the test. So the *test* is obviously wrong. Now we need to start thinking a bit. What should be actually tested? 
 
-## Making the function testable
+## Making it testable
 
 Okay, we want the function to print the string "hello" to terminal. How to test it except by looking at the terminal? In Bash the terminal is the standard output, i.e. the place where the stuff is written to by default. But we can redirect the standard output to a file or store it in a variable:
 
@@ -126,7 +126,7 @@ hello
 
 ## Decreasing complexity
 
-Talking about the end user and looking at how the PrintTo function is called
+Talking about the end user and looking at how the `PrintTo` function is called in `main`
 
 ```go
 hello.PrintTo(os.Stdout)
@@ -136,7 +136,7 @@ we might think there is something not ideal there. Why should a user tell the fu
 
 ### Nil argument
 
-But the PrintTo function needs an argument. So maybe we can use the approach that's used by the http.ListenAndServe function. We use `nil` to indicate we want the default behaviour:
+But the `PrintTo` function *must* have an argument when called. So maybe we can use the approach that's used by the `http.ListenAndServe` standard library function; we use `nil` to indicate we want the default behaviour:
 
 ```go
 // hello/3/hello.go
@@ -173,7 +173,7 @@ hello.Output = new(bytes.Buffer)
 hello.Print()
 ```
 
-This works but changing the state globally is always dangerous. For example, if we had multiple tests that would be running in parallel (using `testing.Parallel()` for example), changing the global variable from multiple functions at the same time could cause problems.
+However, changing the state globally is always dangerous. For example, if we had multiple tests that would be running in parallel (using `testing.Parallel()` for example), changing the global variable from multiple functions at the same time could cause problems.
 
 ### A struct
 
@@ -195,7 +195,7 @@ p1.Print() // prints to standard output
 p2.Print() // prints to standard error
 ```
 
-But we re-introduced the problem of having to define the default writer. To fix it for structs we create a function that sets the output to the default value:
+But we re-introduced the problem of having to define the default writer. To fix this we create a function called `NewPrinter` that sets the output to the default value:
 
 ```go
 // hello/6/hello.go
