@@ -33,7 +33,7 @@ func TestPrintExists(t *testing.T) {
 }
 ```
 
-We named the package hello_test instead of the usual hello. This is possible and it allows for writing tests that use only the public API (identifiers starting with a capital letter) of the package as an external user would. In this test we just call the Print function from the hello package. Let's try and run the test:
+We named the package hello_test instead of the usual hello. This is possible and it allows for writing tests that use only the public API (identifiers starting with a capital letter) of the package as a real user would. In this test we just call the Print function from the `hello` package. Let's try and run the test:
 
 ```sh
 $ go test
@@ -41,7 +41,7 @@ hello: no non-test Go files in ~/github.com/go-monk/from-bash-to-go-series/part-
 FAIL    hello [build failed]
 ```
 
-Yes, we have not yet written the code. So let's do it:
+Yes, we have not yet written the code we want to test. So let's do it:
 
 ```go
 // hello/1/hello.go
@@ -58,7 +58,7 @@ PASS
 ok      hello   0.570s
 ```
 
-we can see that all is good now. Or is it? Well something is wrong because an empty function that does nothing at all (except that it exists) passes the test. So the test is obviously wrong. Now we need to start thinking a bit. What should be actually tested? 
+we can see that all is good now. Or is it? Well, something must be wrong because an empty function that does nothing at all (except that it exists) passes the test. So the *test* is obviously wrong. Now we need to start thinking a bit. What should be actually tested? 
 
 ## Making the function testable
 
@@ -69,7 +69,7 @@ $ echo hello > /tmp/hello.txt
 $ HELLO=$(echo hello)
 ```
 
-In Go you can achieve similar functionality by using the standard library interface called io.Writer (Writer identifier from the io package):
+In Go you can achieve similar functionality by using the standard library interface called [io.Writer](https://pkg.go.dev/io#Writer) (that is the `Writer` from the `io` package):
 
 ```go
 // hello/2/hello.go
@@ -79,15 +79,15 @@ func PrintTo(w io.Writer) {
 }
 ```
 
-We write (print) the string hello to the "thing" supplied as the function's argument. And since the argument (parameter more precisely) is an interface it can be multiple kinds of things. Or more precisely it can be any type that implements the io.Writer interface, i.e. has a function with the `Write(p []byte) (int, error)` signature attached.
+We write (print) the string "hello" to the thing supplied as the function's argument. And since the argument (parameter more precisely) is an interface it can be multiple kinds of things. Or more precisely it can be any type that implements the `io.Writer` interface, i.e. has a function with the `Write(p []byte) (int, error)` signature attached.
 
-There are many implementations of io.Writer in the standard library. Two of them are `bytes.Buffer` and `os.Stdout`. We can write to a bytes buffer in the test and to the standard output in the main function like this:
+There are many implementations of `io.Writer` in the standard library. Two of them are `bytes.Buffer` and `os.Stdout`. We can write to a bytes buffer in the test
 
 ```go
 // hello/2/hello_test.go
 func TestPrintToPrintsHelloToWriter(t *testing.T) {
 	buf := new(bytes.Buffer)
-	hello.PrintTo(buf)
+	hello.PrintTo(buf) // writing to buffer
 	want := "hello"
 	got := buf.String()
 	if want != got {
@@ -96,10 +96,12 @@ func TestPrintToPrintsHelloToWriter(t *testing.T) {
 }
 ```
 
+and to the standard output in the main function
+
 ```go
 // hello/2/cmd/hello/main.go
 func main() {
-	hello.PrintTo(os.Stdout)
+	hello.PrintTo(os.Stdout) // writing to STDOUT
 }
 ```
 
@@ -117,9 +119,6 @@ As an exercise try to break the test so it doesn't pass.
 We also added the `cmd` folder that holds the binary (command) to be used by the end user like this:
 
 ```sh
-$ go run ./cmd/hello
-hello
-
 $ go install ./cmd/hello
 $ hello
 hello
