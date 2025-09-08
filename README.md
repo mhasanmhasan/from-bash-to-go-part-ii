@@ -1,4 +1,4 @@
-This is the second part of a series introducing Bash programmers to Go. This part is about basics of writing CLI tools in Go. See the first part for the language building blocks.
+This is the second part of a series introducing Bash programmers to Go. This part is about basics of writing CLI tools in Go. See the [first](https://github.com/go-monk/from-bash-to-go-part-i) part for the language building blocks.
 
 # Our first CLI tool
 
@@ -33,7 +33,7 @@ func TestPrintExists(t *testing.T) {
 }
 ```
 
-We named the package hello_test instead of the usual hello. This is possible and it allows for writing tests that use only the public API (identifiers starting with a capital letter) of the package as a real user would. In this test we just call the Print function from the `hello` package. Let's try and run the test:
+We named the package `hello_test` instead of `hello`. This is possible and it allows for writing tests that use only the public API (identifiers starting with a capital letter) of the tested package as a real user would. In this test we just call the `Print` function from the `hello` package. Let's try and run the test:
 
 ```sh
 $ go test
@@ -79,7 +79,7 @@ func PrintTo(w io.Writer) {
 }
 ```
 
-We write (print) the string "hello" to the thing supplied as the function's argument. And since the argument (parameter more precisely) is an interface it can be multiple kinds of things. Or more precisely it can be any type that implements the `io.Writer` interface, i.e. has a function with the `Write(p []byte) (int, error)` signature attached.
+We write (print) the string "hello" to `w` supplied as the function's argument. And since the argument (parameter more precisely) is an interface it can be multiple kinds of things. Or more precisely it can be any type that implements the `io.Writer` interface, i.e. has a function with the `Write(p []byte) (int, error)` signature attached.
 
 There are many implementations of `io.Writer` in the standard library. Two of them are `bytes.Buffer` and `os.Stdout`. We can write to a bytes buffer in the test
 
@@ -132,7 +132,7 @@ Talking about the end user and looking at how the `PrintTo` function is called i
 hello.PrintTo(os.Stdout)
 ```
 
-we might think there is something not ideal there. Why should a user tell the function to print to standard output? Isn't it what most users want most of the time? Shouldn't it be the default behavior?
+we might think this is not ideal. Why should a user tell the function to print to standard output? Isn't it what most users want most of the time? Shouldn't it be the default behavior?
 
 ### Nil argument
 
@@ -206,7 +206,7 @@ func NewPrinter() *Printer {
 }
 ```
 
-Note that now we use a pointer to Printer. This way we can change the default output by assigning to the Output field:
+Note that now we use a *pointer* to `Printer`. This way we can change the default output by assigning to the `Output` field:
 
 ```go
 // hello/6/cmd/hello/main.go
@@ -217,7 +217,7 @@ p.Print()
 
 # Getting more practical
 
-Having done the obligatory hello (world) example let's turn to something more practical. We'll write a CLI tool to count duplicate lines in input. To be able to change the input we create a type called `counter` with the `input` field of the familiar `io.Reader` type
+Having done the obligatory hello (world) example let's turn to something more practical. We'll write a CLI tool to count duplicate lines in input. To be able to change the input we create a type called `counter` with the `input` field of the `io.Reader` type
 
 ```go
 // count/1/count.go
@@ -243,7 +243,7 @@ The Lines function counts duplicate lines by scanning the input line by line and
 
 ## Optional parameter
 
-Here's another pattern for having both a default value and being able to change it if needed. It's based on a function type - yeah, in Go we can define a custom function type.
+Here's another pattern for having both a default value and being able to change it if needed. It's based on a function type - yeah, in Go we can define a custom type that is a function.
 
 The `option` type below is a function with specific signature. And we define the `NewCounter` function to use the `option` type for its parameters. There can be zero or more of such parameters. This is called a variadic parameter and it's denoted by the `...` syntax:
 
