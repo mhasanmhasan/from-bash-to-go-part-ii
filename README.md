@@ -33,7 +33,7 @@ func TestPrintExists(t *testing.T) {
 }
 ```
 
-We named the package `hello_test` instead of `hello`. This is possible and it allows for writing tests that use only the public API (identifiers starting with a capital letter) of the tested package as a real user would. In this test we just call the `Print` function from the `hello` package. Let's try and run the test:
+We named the package `hello_test` instead of `hello`. This is possible and it allows for writing tests that use only the public API (identifiers starting with a capital letter) of the tested package as a real user would. Note that `*_test` packages are the sole exception to Go's standard rule that each source directory can contain only one package. In this test we just call the `Print` function from the `hello` package. Let's try and run the test:
 
 ```sh
 $ go test
