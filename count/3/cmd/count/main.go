@@ -12,6 +12,9 @@ const usage = `Counts words (or lines) from stdin (or files).
 Usage: count [-lines] [file...]`
 
 func main() {
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT)
+	
 	flag.Usage = func() {
 		fmt.Println(usage)
 		flag.PrintDefaults()
@@ -40,5 +43,11 @@ func main() {
 	}
 	for line, n := range counts {
 		fmt.Printf("%d\t%s\n", n, line)
+	}
+	select {
+	case <-sig:
+		println("\nProgram interrupted by user pressing Ctrl+C hence exiting gracefully!")
+		os.Exit(0)
+	default:
 	}
 }
